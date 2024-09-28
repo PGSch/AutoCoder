@@ -4,7 +4,6 @@ jobs:
   say_hello:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
       - uses: actions/checkout@v4
       - name: Greeting the push
         run: echo "Hello, world"
