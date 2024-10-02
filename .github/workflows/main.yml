@@ -9,12 +9,12 @@ jobs:
       - uses: actions/checkout@v4
       - name: Print Issue Information
         run: |
-          echo "Issue Number: $(ISSUE_NUMBER)"
-          echo "Issue Title: $(ISSUE_TITLE)"
-          echo "Issue Body: $(ISSUE_BODY)"
-          echo "Issue Assignees: $(ISSUE_ASSIGNEES)"
-          echo "Issue Labels: $(ISSUE_LABELS)"
-          echo "Issue Information: $(ISSUE_RESPONSE)"
+          echo "Issue Number: $ISSUE_NUMBER"
+          echo "Issue Title: $ISSUE_TITLE"
+          echo "Issue Body: $ISSUE_BODY"
+          echo "Issue Assignees: $ISSUE_ASSIGNEES"
+          echo "Issue Labels: $ISSUE_LABELS"
+          echo "Issue Information: $ISSUE_RESPONSE"
         env:
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
