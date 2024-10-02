@@ -1,9 +1,0 @@
-name: main_flow
-on: [push]
-jobs:
-  say_hello:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Greeting the push
-        run: echo "Hello, world"
