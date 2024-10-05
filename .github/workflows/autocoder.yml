@@ -15,7 +15,7 @@ jobs:
       - name: Run a script if the label is present
         run: echo "The 'autocoder-bot' label is present. Running the job."
 
-  error:
+  show-mrror:
     runs-on: ubuntu-latest
     if: "!contains(join(github.event.issue.labels.*.name, ', '), 'autocoder-bot')"
     steps:
