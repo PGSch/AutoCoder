@@ -43,3 +43,9 @@ jobs:
           echo "Listing contents of autocoder-artifact:"
           ls -R autocoder-artifact/
 
+  error:
+    if: !contains(github.event.issue.labels.*.name, 'autocoder-bot')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Error
+        run: echo "Job 'generate_code' was not executed!"
