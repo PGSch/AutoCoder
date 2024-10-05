@@ -1,0 +1,45 @@
+name: AutoCoder Bot
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  generate_code:
+    if: contains(github.event.issue.labels.*.name, 'autocoder-bot')
+    
+    runs-on: ubuntu-latest
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPOSITORY: ${{ github.repository }}
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Make script executable
+        run: chmod +x script.sh
+
+      - name: Run Bash Script
+        run: ./script.sh "$GITHUB_TOKEN" "$REPOSITORY" "$ISSUE_NUMBER" "$OPENAI_API_KEY"
+
+      - name: Upload Generated Code
+        uses: actions/upload-artifact@v4
+        with:
+          name: autocoder-artifact
+          path: autocoder-artifact/
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: autocoder-artifact
+          path: autocoder-artifact
+
+      - name: List Artifact Contents
+        run: |
+          echo "Listing contents of autocoder-artifact:"
+          ls -R autocoder-artifact/
+

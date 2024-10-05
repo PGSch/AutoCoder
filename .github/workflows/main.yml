@@ -24,4 +24,3 @@ jobs:
           ISSUE_LABELS: ${{ join(github.event.issue.labels.*.name, ', ') }}
           GITHUB_REPOSITORY: ${{ github.repository }}
 
-
