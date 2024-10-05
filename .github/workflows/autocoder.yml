@@ -5,66 +5,19 @@ on:
     types: [opened, edited]
 
 jobs:
-  check_label:
-    runs-on: ubuntu-latest
-    outputs:
-      run_generate: ${{ steps.label_check.outputs.run_generate }}
-    steps:
-      - name: Check if Issue Contains 'autocoder-bot' Label
-        id: label_check
-        shell: bash
-        run: |
-          # Extract label names into an array and check if 'autocoder-bot' is present
-          labels=$(echo "${{ toJSON(github.event.issue.labels) }}" | jq -r '.[].name')
-          if echo "$labels" | grep -q 'autocoder-bot'; then
-            echo "Label 'autocoder-bot' found!"
-            echo "::set-output name=run_generate::true"
-          else
-            echo "Label 'autocoder-bot' not found."
-            echo "::set-output name=run_generate::false"
-          fi
-
   generate_code:
-    needs: check_label
     runs-on: ubuntu-latest
-    if: ${{ needs.check_label.outputs.run_generate == 'true' }}
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      REPOSITORY: ${{ github.repository }}
-      ISSUE_NUMBER: ${{ github.event.issue.number }}
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-
+    if: contains(join(github.event.issue.labels.*.name, ', '), 'autocoder-bot')
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Make script executable
-        run: chmod +x script.sh
+      - name: Run a script if the label is present
+        run: echo "The 'autocoder-bot' label is present. Running the job."
 
-      - name: Run Bash Script
-        run: ./script.sh "$GITHUB_TOKEN" "$REPOSITORY" "$ISSUE_NUMBER" "$OPENAI_API_KEY"
-
-      - name: Upload Generated Code
-        uses: actions/upload-artifact@v4
-        with:
-          name: autocoder-artifact
-          path: autocoder-artifact/
-
-      - name: Download Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: autocoder-artifact
-          path: autocoder-artifact
-
-      - name: List Artifact Contents
-        run: |
-          echo "Listing contents of autocoder-artifact:"
-          ls -R autocoder-artifact/
-
-  show_error:
-    needs: check_label
+  error:
     runs-on: ubuntu-latest
-    if: ${{ needs.check_label.outputs.run_generate == 'false' }}
+    if: "!contains(join(github.event.issue.labels.*.name, ', '), 'autocoder-bot')"
     steps:
       - name: Display Error
         run: echo "Job 'generate_code' was not executed because the 'autocoder-bot' label was not found!"
