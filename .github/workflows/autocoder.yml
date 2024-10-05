@@ -5,11 +5,29 @@ on:
     types: [opened, edited]
 
 jobs:
-  generate_code:
-    if: contains(github.event.issue.labels.*.name, 'autocoder-bot')
-    
+  check_label:
     runs-on: ubuntu-latest
+    outputs:
+      run_generate: ${{ steps.label_check.outputs.run_generate }}
+    steps:
+      - name: Check if Issue Contains 'autocoder-bot' Label
+        id: label_check
+        shell: bash
+        run: |
+          # Extract label names into an array and check if 'autocoder-bot' is present
+          labels=$(echo "${{ toJSON(github.event.issue.labels) }}" | jq -r '.[].name')
+          if echo "$labels" | grep -q 'autocoder-bot'; then
+            echo "Label 'autocoder-bot' found!"
+            echo "::set-output name=run_generate::true"
+          else
+            echo "Label 'autocoder-bot' not found."
+            echo "::set-output name=run_generate::false"
+          fi
 
+  generate_code:
+    needs: check_label
+    runs-on: ubuntu-latest
+    if: ${{ needs.check_label.outputs.run_generate == 'true' }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       REPOSITORY: ${{ github.repository }}
@@ -43,9 +61,10 @@ jobs:
           echo "Listing contents of autocoder-artifact:"
           ls -R autocoder-artifact/
 
-  error:
-    if: !contains(github.event.issue.labels.*.name, 'autocoder-bot')
+  show_error:
+    needs: check_label
     runs-on: ubuntu-latest
+    if: ${{ needs.check_label.outputs.run_generate == 'false' }}
     steps:
-      - name: Error
-        run: echo "Job 'generate_code' was not executed!"
+      - name: Display Error
+        run: echo "Job 'generate_code' was not executed because the 'autocoder-bot' label was not found!"
