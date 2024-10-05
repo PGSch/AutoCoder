@@ -7,15 +7,43 @@ on:
 jobs:
   generate_code:
     runs-on: ubuntu-latest
+
     if: contains(join(github.event.issue.labels.*.name, ', '), 'autocoder-bot')
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPOSITORY: ${{ github.repository }}
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Run a script if the label is present
-        run: echo "The 'autocoder-bot' label is present. Running the job."
+      - name: Make script executable
+        run: chmod +x ./scripts/script.sh
 
-  show-mrror:
+      - name: Run Bash Script
+        run: ./scripts/script.sh "$GITHUB_TOKEN" "$REPOSITORY" "$ISSUE_NUMBER" "$OPENAI_API_KEY"
+
+      - name: Upload Generated Code
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifact
+          path: autocoder-artifact
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: artifact
+          path: autocoder-artifact
+
+      - name: List Artifact Contents
+        run: |
+          echo "Listing contents of autocoder-artifact:"
+          ls -R autocoder-artifact/
+
+  show-error:
     runs-on: ubuntu-latest
     if: "!contains(join(github.event.issue.labels.*.name, ', '), 'autocoder-bot')"
     steps:
