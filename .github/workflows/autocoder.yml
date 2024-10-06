@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set permissions for script.sh
         run: chmod +x scripts/script.sh
@@ -35,14 +35,14 @@ jobs:
 
       - name: Upload generated files as artifacts
         if: env.has_label == 'true'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: autocoder-artifact
           path: ./autocoder-bot
 
       - name: Download artifacts
         if: env.has_label == 'true'
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: autocoder-artifact
           path: ./autocoder-artifact
