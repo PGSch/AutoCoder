@@ -1,4 +1,4 @@
-ame: Autocoder Bot Workflow
+name: Autocoder Bot Workflow
 
 on:
   issues:
