@@ -2,7 +2,7 @@ name: AutoCoder Bot
 
 on:
   issues:
-    types: [opened, edited, labeled]
+    types: [opened, reopened, labeled]
 
 jobs:
   generate_code:
