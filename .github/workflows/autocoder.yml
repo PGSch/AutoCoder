@@ -20,18 +20,20 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Make script executable
+      - name: Set permissions for script.sh
         run: chmod +x ./scripts/script.sh
 
-      - name: Create Bash Script Output
+      - name: Run script.sh
+        id: generate_code
         run: |
           ./scripts/script.sh "$GITHUB_TOKEN" "$REPOSITORY" "$ISSUE_NUMBER" "$OPENAI_API_KEY" 
 
-      - name: Upload Generated Code
+      - name: Upload generated files as artifacts
         uses: actions/upload-artifact@v4
+        id: upload_artifact
         with:
           name: autocoder-artifact
-          path: autocoder-bot/*
+          path: autocoder-bot/
           if-no-files-found: error
           retention-days: 1
 
@@ -57,10 +59,25 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: autocoder-artifact
+          path: autocoder-artifact
 
       - name: List Artifact Contents
         run: |
           echo "Listing contents of autocoder-artifact:"
-          ls -R autocoder-artifact/
+          ls -R /autocoder-artifact
 
-
+#      - name: Configure Git
+#        run: |
+#          git config --local user.name "GitHub Actions Bot"
+#          git config --local user.email "actions@github.com"
+#
+#      - name: Add changes to the repo
+#        run: |
+#          git add .
+#          git commit -m "Added artifact files to repository"
+#
+#      - name: Push changes
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # This is automatically provided by GitHub Actions
+#        run: |
+#          git push origin HEAD
