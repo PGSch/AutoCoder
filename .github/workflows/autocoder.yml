@@ -24,36 +24,24 @@ jobs:
         run: chmod +x ./scripts/script.sh
 
       - name: Run script.sh
-        id: generate_code
         run: |
           ./scripts/script.sh "$GITHUB_TOKEN" "$REPOSITORY" "$ISSUE_NUMBER" "$OPENAI_API_KEY" 
 
       - name: Upload generated files as artifacts
         uses: actions/upload-artifact@v4
-        id: upload_artifact
         with:
           name: autocoder-artifact
           path: ./autocoder-bot
           if-no-files-found: error
           retention-days: 1
 
-#      - name: Upload on failure
+#      - name: Upload on Failure
 #        uses: actions/upload-artifact@v4
 #        if: failure()
 #        with:
 #          name: failure_artifact
 #          path: failure.log
 
-#  show-error:
-#    runs-on: ubuntu-latest
-#    if: "!contains(join(github.event.issue.labels.*.name, ', '), 'autocoder-bot')"
-#    steps:
-#      - name: Display Error
-#        run: echo "Job 'generate_code' was not executed because the 'autocoder-bot' label was not found!"
-
-#  create_output:
-#    runs-on: ubuntu-latest
-#    needs: generate_code
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
