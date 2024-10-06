@@ -1,64 +1,52 @@
-name: AutoCoder Bot
+name: Autocoder Bot Workflow
 
 on:
   issues:
-    types: [opened, edited, labeled]
+    types: [opened, reopened, labeled]
 
 jobs:
   generate_code:
     runs-on: ubuntu-latest
 
-    if: contains(github.event.issue.labels.*.name, 'autocoder-bot')
-
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      REPOSITORY: ${{ github.repository }}
-      ISSUE_NUMBER: ${{ github.event.issue.number }}
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Set permissions for script.sh
-        run: chmod +x ./scripts/script.sh  # Adjust path if necessary
+        run: chmod +x scripts/script.sh
 
-      - name: Run script.sh
+      - name: Check if issue has 'autocoder-bot' label
+        id: check_label
         run: |
-          ./scripts/script.sh "$GITHUB_TOKEN" "$REPOSITORY" "$ISSUE_NUMBER" "$OPENAI_API_KEY"
+          labels=$(echo '${{ toJson(github.event.issue.labels) }}' | jq -r '.[] | .name')
+          if echo "$labels" | grep -q 'autocoder-bot'; then
+            echo "has_label=true" >> $GITHUB_ENV
+          else
+            echo "has_label=false" >> $GITHUB_ENV
+          fi
+      - name: Run script.sh
+        if: env.has_label == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: ./scripts/script.sh $GITHUB_TOKEN $REPOSITORY $ISSUE_NUMBER $OPENAI_API_KEY
 
       - name: Upload generated files as artifacts
-        uses: actions/upload-artifact@v4
+        if: env.has_label == 'true'
+        uses: actions/upload-artifact@v2
         with:
           name: autocoder-artifact
           path: ./autocoder-bot
-          if-no-files-found: error
-          retention-days: 1
 
-      - name: Download Artifact
-        uses: actions/download-artifact@v4
+      - name: Download artifacts
+        if: env.has_label == 'true'
+        uses: actions/download-artifact@v2
         with:
           name: autocoder-artifact
           path: ./autocoder-artifact
 
-      - name: List Artifact Contents
-        run: |
-          echo "Listing contents of autocoder-artifact:"
-          ls -R ./autocoder-artifact
-
-      # Uncomment the following steps if you need to commit the generated code to the repository
-      # - name: Configure Git
-      #   run: |
-      #     git config --local user.name "GitHub Actions Bot"
-      #     git config --local user.email "actions@github.com"
-      #
-      # - name: Add changes to the repo
-      #   run: |
-      #     git add ./autocoder-bot
-      #     git commit -m "Add generated code from AutoCoder Bot"
-      #
-      # - name: Push changes
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   run: |
-      #     git push origin HEAD
+      - name: List files in artifact
+        if: env.has_label == 'true'
+        run: ls -R ./autocoder-artifact
