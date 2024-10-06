@@ -33,7 +33,7 @@ jobs:
         id: upload_artifact
         with:
           name: autocoder-artifact
-          path: autocoder-bot/
+          path: ./autocoder-bot
           if-no-files-found: error
           retention-days: 1
 
@@ -59,7 +59,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: autocoder-artifact
-          path: autocoder-artifact
+          path: ./autocoder-artifact
 
       - name: List Artifact Contents
         run: |
