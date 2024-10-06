@@ -37,12 +37,12 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-      - name: Upload on failure
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: failure_artifact
-          path: failure.log
+#      - name: Upload on failure
+#        uses: actions/upload-artifact@v4
+#        if: failure()
+#        with:
+#          name: failure_artifact
+#          path: failure.log
 
 #  show-error:
 #    runs-on: ubuntu-latest
