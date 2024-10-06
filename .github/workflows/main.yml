@@ -2,7 +2,7 @@ ame: Autocoder Bot Workflow
  
 on:
   issues:
-    types: [opened, reopened, labeled]
+    types: [opened, reopened, labeled, updated]
  
 jobs:
   generate_code:
