@@ -64,7 +64,7 @@ jobs:
       - name: List Artifact Contents
         run: |
           echo "Listing contents of autocoder-artifact:"
-          ls -R /autocoder-artifact
+          ls -R $(pwd)/autocoder-artifact
 
 #      - name: Configure Git
 #        run: |
