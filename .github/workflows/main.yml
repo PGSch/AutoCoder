@@ -10,11 +10,7 @@ jobs:
 
     if: contains(github.event.issue.labels.*.name, 'autocoder-bot')
 
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      REPOSITORY: ${{ github.repository }}
-      ISSUE_NUMBER: ${{ github.event.issue.number }}
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
 
     steps:
       - name: Checkout Repository
@@ -24,8 +20,13 @@ jobs:
         run: chmod +x ./scripts/script.sh
 
       - name: Run script.sh
-        run: |
-          ./scripts/script.sh "$GITHUB_TOKEN" "$REPOSITORY" "$ISSUE_NUMBER" "$OPENAI_API_KEY"
+        id: generate_code
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: ./scripts/script.sh $GITHUB_TOKEN $REPOSITORY $ISSUE_NUMBER $OPENAI_API_KEY
 
       - name: Upload generated files as artifacts
         uses: actions/upload-artifact@v4

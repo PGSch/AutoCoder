@@ -43,3 +43,6 @@ MANIFEST
 
 # macOS files
 .DS_Store
+
+# other
+*.tmpl
