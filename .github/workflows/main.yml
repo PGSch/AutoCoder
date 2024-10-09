@@ -17,49 +17,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Configure Git
-        run: |
-          git config --local user.name "autocoder-bot"
-          git config --local user.email "actions@github.com"
-
-      - name: make the script executable
-        run: chmod +x ./scripts/script.sh
-
       - name: Generate Code with ChatGPT
         id: generate_code
-        env:
+        uses: PGSch/AutoCoder@main
+        with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPOSITORY: ${{ github.repository }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: ./scripts/script.sh $GITHUB_TOKEN $REPOSITORY $ISSUE_NUMBER $OPENAI_API_KEY
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: autocoder-artifact
-          path: autocoder-bot/
-
-      - name: Download Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: autocoder-artifact
-          path: autocoder-artifact/
-
-      - name: List Files
-        run: ls -R ./autocoder-artifact
-
-      - name: Commit Changes
-        run: |
-          git config --local user.name "autocoder-bot"
-          git config --local user.email "actions@github.com"
-          git add ./autocoder-artifact
-          git commit -m "Add generated code from ChatGPT"
-
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
-        with:
-          labels: "autocoder-bot"
-          author: autocoder-bot <actions@github.com>
-          title: "PR to issue #${{ github.event.issue.number }}"
-          branch: autocoder-branch-${{ github.event.issue.number }}
