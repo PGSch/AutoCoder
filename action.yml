@@ -69,7 +69,7 @@ runs:
       run: |
         git config --local user.email "actions@github.com"
         git config --local user.name "autocoder-bot"
-        git add .
+        git add autocoder-artifact
         git commit -m "Add generated code from ChatGPT"
       shell: bash  # Added shell property here
 
@@ -78,5 +78,5 @@ runs:
       with:
         labels: "autocoder-bot"
         author: autocoder-bot <actions@github.com>
-        title: "#${{ github.event.issue.number }}"
+        title: "PR to issue #${{ github.event.issue.number }}"
         branch: autocoder-branch-${{ inputs.ISSUE_NUMBER }}
