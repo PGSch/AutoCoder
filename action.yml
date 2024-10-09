@@ -41,7 +41,7 @@ runs:
 
     - name: Generate Code from Issue
       id: generate_code
-      run: ./${{ inputs.SCRIPT_PATH }} ${{ inputs.GITHUB_TOKEN }} ${{ inputs.REPOSITORY }} ${{ inputs.ISSUE_NUMBER }} ${{ inputs.OPENAI_API_KEY }}
+      run: ./scripts/script.sh ${{ inputs.GITHUB_TOKEN }} ${{ inputs.REPOSITORY }} ${{ inputs.ISSUE_NUMBER }} ${{ inputs.OPENAI_API_KEY }}
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
