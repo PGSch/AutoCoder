@@ -1,5 +1,5 @@
 name: 'AutoCoder'
-description: 'This action automates the process of generating code from GitHub issues using OpenAI’s ChatGPT and subsequently creates a pull request with the generated code for review.'
+description: 'This action automates the process of generating code from GitHub issues using OpenAIs ChatGPT and subsequently creates a pull request with the generated code for review.'
 author: 'Your Name or Organization'
 
 inputs:
@@ -17,8 +17,7 @@ inputs:
     required: true
   SCRIPT_PATH:
     description: 'The path to the script that interacts with ChatGPT and generates code.'
-    required: false
-    default: scripts/script.sh
+    required: true
   LABEL:
     description: 'Allows users to customize the label that triggers the action.'
     required: true
@@ -32,22 +31,25 @@ runs:
   steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
-
     - name: Configure Git
       run: |
         git config --local user.name "autocoder-bot"
         git config --local user.email "actions@github.com"
-      shell: bash  # Added shell property here
+      shell: bash
 
-    - name: Make the Script Executable
-      run: chmod +x ${{ github.action_path }}/${{ inputs.SCRIPT_PATH }}
-      shell: bash  # Added shell property here
+    - name: make the script executable
+      run: chmod +x ./scripts/script.sh
+      shell: bash
 
-    - name: Generate Code from Issue
+    - name: Generate Code with ChatGPT
       id: generate_code
-      run: ${{ github.action_path }}/${{ inputs.SCRIPT_PATH }} ${{ inputs.GITHUB_TOKEN }} ${{ inputs.REPOSITORY }} ${{ inputs.ISSUE_NUMBER }} ${{ inputs.OPENAI_API_KEY }}
-      #run: ./scripts/script.sh ${{ inputs.GITHUB_TOKEN }} ${{ inputs.REPOSITORY }} ${{ inputs.ISSUE_NUMBER }} ${{ inputs.OPENAI_API_KEY }}
-      shell: bash  # Added shell property here
+      env:
+        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+        REPOSITORY: ${{ inputs.repository }}
+        ISSUE_NUMBER: ${{ inputs.issue.number }}
+        OPENAI_API_KEY: ${{ inputs.OPENAI_API_KEY }}
+      run: ./scripts/script.sh $GITHUB_TOKEN $REPOSITORY $ISSUE_NUMBER $OPENAI_API_KEY
+      shell: bash
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
@@ -63,20 +65,20 @@ runs:
 
     - name: List Files
       run: ls -R ./autocoder-artifact
-      shell: bash  # Added shell property here
+      shell: bash
 
     - name: Commit Changes
       run: |
         git config --local user.email "actions@github.com"
         git config --local user.name "autocoder-bot"
-        git add autocoder-artifact
+        git add .
         git commit -m "Add generated code from ChatGPT"
-      shell: bash  # Added shell property here
+      shell: bash
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v6
       with:
         labels: "autocoder-bot"
         author: autocoder-bot <actions@github.com>
-        title: "PR to issue #${{ github.event.issue.number }} ${{ github.event.issue.title }}"
-        branch: autocoder-branch-${{ inputs.ISSUE_NUMBER }}
+        title: "#${{ github.event.issue.number }}"
+        branch: autocoder-branch-${{ inputs.issue.number }}
