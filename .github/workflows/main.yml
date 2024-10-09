@@ -37,6 +37,7 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v7
         with:
+          add-paths: autocoder-bot/*
           token: ${{ env.GITHUB_TOKEN }}
           commit-message: Initialize code package created by gpt
           committer: autocoder-bot <actions@github.com>
