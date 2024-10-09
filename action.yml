@@ -44,7 +44,6 @@ runs:
 
     - name: Generate Code from Issue
       id: generate_code
-      ${{ github.action_path }}/${{ inputs.SCRIPT_PATH }}
       run: ${{ github.action_path }}/${{ inputs.SCRIPT_PATH }} ${{ inputs.GITHUB_TOKEN }} ${{ inputs.REPOSITORY }} ${{ inputs.ISSUE_NUMBER }} ${{ inputs.OPENAI_API_KEY }}
       #run: ./scripts/script.sh ${{ inputs.GITHUB_TOKEN }} ${{ inputs.REPOSITORY }} ${{ inputs.ISSUE_NUMBER }} ${{ inputs.OPENAI_API_KEY }}
       shell: bash  # Added shell property here
