@@ -1,5 +1,5 @@
 name: 'AutoCoder'
-description: 'This action automates the process of generating code from GitHub issues using OpenAIs ChatGPT and subsequently creates a pull request with the generated code for review.'
+description: 'This action automates the process of generating code from GitHub issues using OpenAI’s ChatGPT and subsequently creates a pull request with the generated code for review.'
 author: 'Your Name or Organization'
 
 inputs:
@@ -30,37 +30,38 @@ runs:
   using: 'composite'
   steps:
     - name: Checkout Repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
+
     - name: Configure Git
       run: |
         git config --local user.name "autocoder-bot"
         git config --local user.email "actions@github.com"
-      shell: bash
+      shell: bash  # Added shell property here
 
-    - name: make the script executable
-      run: chmod +x ./scripts/script.sh
-      shell: bash
+    - name: Make the Script Executable
+      run: chmod +x ./${{ inputs.SCRIPT_PATH }}
+      shell: bash  # Added shell property here
 
     - name: Generate Code from Issue
       id: generate_code
       run: ./scripts/script.sh ${{ inputs.GITHUB_TOKEN }} ${{ inputs.REPOSITORY }} ${{ inputs.ISSUE_NUMBER }} ${{ inputs.OPENAI_API_KEY }}
-      shell: bash
+      shell: bash  # Added shell property here
 
     - name: Upload Artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: autocoder-artifact
         path: autocoder-bot/
 
     - name: Download Artifact
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         name: autocoder-artifact
         path: autocoder-artifact/
 
     - name: List Files
       run: ls -R ./autocoder-artifact
-      shell: bash
+      shell: bash  # Added shell property here
 
     - name: Commit Changes
       run: |
@@ -68,7 +69,7 @@ runs:
         git config --local user.name "autocoder-bot"
         git add .
         git commit -m "Add generated code from ChatGPT"
-      shell: bash
+      shell: bash  # Added shell property here
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v6
@@ -76,4 +77,4 @@ runs:
         labels: "autocoder-bot"
         author: autocoder-bot <actions@github.com>
         title: "#${{ github.event.issue.number }}"
-        branch: autocoder-branch-${{ inputs.issue.number }}
+        branch: autocoder-branch-${{ inputs.ISSUE_NUMBER }}
