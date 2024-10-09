@@ -39,7 +39,7 @@ runs:
     - name: make the script executable
       run: chmod +x ./scripts/script.sh
 
-    - name: Generate Code with ChatGPT
+    - name: Interact with ChatGPT
       id: generate_code
       env:
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
