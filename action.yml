@@ -20,7 +20,7 @@ inputs:
   ISSUE_NUMBER:
     description: 'The number fo the issue that triggered the action.'
     required: true
-  ISSUE_LABEL:
+  LABEL:
     description: 'The label assigned to GitHub issues that should be processed by the AutoCoder action. Only issues with this label will trigger the code generation process.'
     required: true
     default: 'autocoder-bot'
