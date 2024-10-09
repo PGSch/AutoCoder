@@ -43,6 +43,9 @@ runs:
       run: echo "Hello, welcome to AutoCoder! Let's generate some code."
       shell: bash
 
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
     - name: Configure Git
       run: |
         git config --local user.name "autocoder-bot"
