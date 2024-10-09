@@ -52,7 +52,7 @@ runs:
         git config --local user.email "actions@github.com"
 
     - name: make the script executable
-      run: chmod +x ./scripts/script.sh
+      run: chmod +x ./${{ inputs.SCRIPT_PATH }}
 
     - name: Generate Code from Issue
       id: generate_code
