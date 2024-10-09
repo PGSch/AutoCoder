@@ -1,30 +1,121 @@
-Here's the description formatted with Markdown:
 
----
+# AutoCoder
 
-# AutoCoder: Automated Code Generation from GitHub Issues
+[![GitHub Release](https://img.shields.io/github/v/release/PGSch/AutoCoder?logo=github)](https://github.com/PGSch/AutoCoder/releases)
+[![GitHub License](https://img.shields.io/github/license/PGSch/AutoCoder)](https://github.com/PGSch/AutoCoder/blob/main/LICENSE)
 
-**AutoCoder** is a powerful tool that automates the process of generating code based on issue descriptions using **GitHub Actions** and **OpenAI’s GPT technology**. The primary objective is to streamline the development workflow for developers by allowing them to automatically generate code snippets, functions, or even entire modules directly from GitHub issues.
+## Overview
 
-## Key Features
+**AutoCoder** is a GitHub Action that automates the process of generating code directly from GitHub issues using OpenAI’s GPT technology and then creates a pull request with the generated code for review. This action is designed to simplify workflows by enabling developers to seamlessly convert issue descriptions into code snippets, functions, or entire modules. AutoCoder is particularly useful for teams looking to prototype features quickly, automate repetitive coding tasks, or maintain a consistent coding standard across a repository.
 
-- **Natural Language Processing**: Leverages ChatGPT to understand natural language descriptions within GitHub issues and convert them into executable code.
-- **Customizable Code Generation**: Users can customize the generated code by providing specific commands or detailed descriptions within the issue.
-- **Automated Pull Request Creation**: After generating the code, AutoCoder automatically creates a pull request containing the generated code for easy review and integration.
-- **Enhanced Productivity**: This tool is ideal for teams seeking to:
-  - Prototype features quickly.
-  - Automate repetitive coding tasks.
-  - Maintain consistent coding standards across repositories.
+## Features
 
-## Future Enhancements
+- **Automated Code Generation**: Generate code based on issue descriptions using OpenAI’s ChatGPT.
+- **Pull Request Creation**: Automatically create pull requests containing the generated code for review and potential merging.
+- **Label-Based Triggers**: Run the action based on specific labels assigned to issues.
+- **Custom Script Integration**: Optionally provide custom scripts to process the issue descriptions as needed.
 
-Future development plans include:
+## How It Works
 
-- **Support for Additional Programming Languages**: Expand the range of supported languages to accommodate various projects and coding standards.
-- **Improved Natural Language Capabilities**: Enhance the language model’s ability to handle more complex code generation scenarios.
+1. **Create an Issue**: A user creates an issue and assigns it a label that triggers the AutoCoder action.
+2. **Generate Code**: AutoCoder processes the issue description, interacts with ChatGPT to generate code, and commits the generated code to the repository.
+3. **Create Pull Request**: AutoCoder creates a pull request with the newly generated code for review.
 
-With AutoCoder, development teams can significantly reduce manual coding efforts and focus on building innovative solutions.
+## Usage
 
---- 
+To use this action in your repository, include it in your GitHub workflow YAML file. Below is an example configuration:
 
-Let me know if you'd like any adjustments or further enhancements!
+### Example Workflow
+
+```yaml
+name: CI
+
+on:
+  issues:
+    types: [opened, reopened, labeled]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  build:
+    if: contains(github.event.issue.labels.*.name, 'autocoder-bot')
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate Code with ChatGPT
+        id: generate_code
+        uses: PGSch/AutoCoder@main
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+```
+
+### Inputs
+
+| Input Name     | Required | Description                                                                                                                                                          |
+|----------------|----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `GITHUB_TOKEN` | `true`   | Personal access token (PAT) used for GitHub API authentication. This token is required to create pull requests and handle other repository interactions.               |
+| `REPOSITORY`   | `true`   | The full name of the repository (e.g., `PGSch/AutoCoder`) where the action will be executed.                                                                           |
+| `ISSUE_NUMBER` | `true`   | The number of the issue that triggered the action. This is used to identify and process the correct issue.                                                            |
+| `OPENAI_API_KEY`| `true`  | API key for OpenAI, enabling interactions with the ChatGPT service to generate code based on issue descriptions.                                                     |
+| `SCRIPT_PATH`  | `false`  | The path to the script that interacts with ChatGPT and generates code. This defaults to `scripts/script.sh` but can be customized to point to other scripts.          |
+| `LABEL`        | `false`  | The label assigned to GitHub issues that should be processed by the AutoCoder action. Only issues with this label will trigger the code generation process. Default is `autocoder-bot`. |
+
+### Outputs
+
+| Output Name         | Description                                                                                         |
+|---------------------|-----------------------------------------------------------------------------------------------------|
+| `pull_request_url`  | The URL of the pull request that has been automatically created, containing the generated code for review and potential merging. |
+
+### Environment Variables
+
+You may need to set the following environment variables to use the action effectively:
+
+- `GITHUB_TOKEN`: This should be set to `${{ secrets.GITHUB_TOKEN }}`.
+- `OPENAI_API_KEY`: The API key for accessing OpenAI’s ChatGPT, set to `${{ secrets.OPENAI_API_KEY }}`.
+
+### Required Permissions
+
+This action requires the following permissions to function properly:
+
+- **Contents**: `write`
+- **Pull Requests**: `write`
+
+## Advanced Configuration
+
+### Custom Scripts
+
+You can provide your own custom scripts to control how the issue descriptions are processed by specifying the `SCRIPT_PATH` input. For example:
+
+```yaml
+with:
+  SCRIPT_PATH: custom-scripts/my-custom-script.sh
+```
+
+Make sure the custom script is located in your repository and is executable.
+
+### Triggering the Action
+
+The action can be triggered using labels on issues. Set the `LABEL` input to control which issues should trigger the action:
+
+```yaml
+with:
+  LABEL: "generate-code"
+```
+
+Only issues with the label `generate-code` will be processed by AutoCoder.
+
+## Contributing
+
+We welcome contributions to improve AutoCoder! Please open an issue or submit a pull request for any features or bug fixes you’d like to see.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
