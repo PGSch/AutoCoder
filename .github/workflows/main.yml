@@ -30,8 +30,11 @@ jobs:
         id: generate_code
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: ./scripts/script.sh $GITHUB_TOKEN $REPOSITORY $ISSUE_NUMBER $OPENAI_API_KEY
-      #        run: date +%s > testing.txt
+        run: |
+          date +%s > testing.txt
+          mkdir 'autocoder-bot'
+          date +%s > autocoder-bot/testing.txt
+      #        run: ./scripts/script.sh $GITHUB_TOKEN $REPOSITORY $ISSUE_NUMBER $OPENAI_API_KEY
 
       - name: Create Pull Request
         id: cpr
