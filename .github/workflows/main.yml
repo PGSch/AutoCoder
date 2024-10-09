@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Configure Git
         run: |
@@ -35,13 +35,13 @@ jobs:
         run: ./scripts/script.sh $GITHUB_TOKEN $REPOSITORY $ISSUE_NUMBER $OPENAI_API_KEY
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: autocoder-artifact
           path: autocoder-bot/
 
       - name: Download Artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: autocoder-artifact
           path: autocoder-artifact/
