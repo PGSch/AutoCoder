@@ -84,5 +84,5 @@ runs:
       with:
         labels: "autocoder-bot"
         author: autocoder-bot <actions@github.com>
-        title: "#${{ github.event.issue.number }}"
-        branch: autocoder-branch-${{ inputs.issue.number }}
+        title: "PR to issue #${{ inputs.ISSUE_NUMBER }}"
+        branch: autocoder-branch-${{ inputs.ISSUE_NUMBER }}
