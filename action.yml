@@ -1,29 +1,26 @@
-
 name: 'AutoCoder'
 description: 'This action automates the process of generating code from GitHub issues using OpenAIs ChatGPT and subsequently creates a pull request with the generated code for review.'
-author: 'github.com/PGSch'
+author: 'Your Name or Organization'
 
 inputs:
+  GITHUB_TOKEN:
+    description: 'Personal access token (PAT) used for GitHub API authentication. This token is required to create pull requests and handle other repository interactions.'
+    required: true
   REPOSITORY:
     description: 'The repository where the action will be executed.'
     required: true
-  SCRIPT_PATH:
-    description: 'The path to the script that interacts with ChatGPT and generates code.'
-    required: false
-    default: scripts/script.sh
-  GITHUB_TOKEN:
-    description: 'Personal access token (PAT) used for GitHub API authentication. This token is required to create pull requests and handle other repository interactions.'
+  ISSUE_NUMBER:
+    description: 'The number of the issue that triggered the action.'
     required: true
   OPENAI_API_KEY:
     description: 'API key for OpenAI, enabling interactions with the ChatGPT service to generate code based on issue descriptions.'
     required: true
-  ISSUE_NUMBER:
-    description: 'The number fo the issue that triggered the action.'
+  SCRIPT_PATH:
+    description: 'The path to the script that interacts with ChatGPT and generates code.'
     required: true
   LABEL:
-    description: 'The label assigned to GitHub issues that should be processed by the AutoCoder action. Only issues with this label will trigger the code generation process.'
+    description: 'Allows users to customize the label that triggers the action.'
     required: true
-    default: 'autocoder-bot'
 
 outputs:
   pull_request_url:
@@ -31,31 +28,34 @@ outputs:
 
 runs:
   using: 'composite'
-
   steps:
-    - name: Greet Users
-      run: echo "Hello, welcome to AutoCoder! Let's generate some code."
-      shell: bash
-
     - name: Checkout Repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v2
+    - name: Configure Git
+      run: |
+        git config --local user.name "autocoder-bot"
+        git config --local user.email "actions@github.com"
 
     - name: make the script executable
-      run: chmod +x ./${{ inputs.SCRIPT_PATH }}
+      run: chmod +x ./scripts/script.sh
 
-    - name: Generate Code from Issue
+    - name: Generate Code with ChatGPT
       id: generate_code
-      run: ./${{ inputs.SCRIPT_PATH }} ${{ inputs.GITHUB_TOKEN }} ${{ inputs.REPOSITORY }} ${{ inputs.ISSUE_NUMBER }} ${{ inputs.OPENAI_API_KEY }}
-      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+        REPOSITORY: ${{ inputs.repository }}
+        ISSUE_NUMBER: ${{ inputs.issue.number }}
+        OPENAI_API_KEY: ${{ inputs.OPENAI_API_KEY }}
+      run: ./scripts/script.sh $GITHUB_TOKEN $REPOSITORY $ISSUE_NUMBER $OPENAI_API_KEY
 
     - name: Upload Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v2
       with:
         name: autocoder-artifact
         path: autocoder-bot/
 
     - name: Download Artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v2
       with:
         name: autocoder-artifact
         path: autocoder-artifact/
@@ -63,20 +63,17 @@ runs:
     - name: List Files
       run: ls -R ./autocoder-artifact
 
-    - name: Configure Git Credentials
-      run: git config --local user.name "autocoder-bot"; git config --local user.email "actions@github.com"; git remote set-url origin https://x-access-token:${{ inputs.GITHUB_TOKEN }}@github.com/${{ inputs.REPOSITORY }}.git
-
     - name: Commit Changes
       run: |
-        git add ./autocoder-artifact
+        git config --local user.email "actions@github.com"
+        git config --local user.name "autocoder-bot"
+        git add .
         git commit -m "Add generated code from ChatGPT"
-        git push origin HEAD:autocoder-branch-${{ inputs.ISSUE_NUMBER }}
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v6
       with:
-        token: ${{ inputs.GITHUB_TOKEN }}
         labels: "autocoder-bot"
         author: autocoder-bot <actions@github.com>
-        title: "PR to issue #${{ inputs.ISSUE_NUMBER }}"
-        branch: autocoder-branch-${{ inputs.ISSUE_NUMBER }}
+        title: "#${{ github.event.issue.number }}"
+        branch: autocoder-branch-${{ inputs.issue.number }}
