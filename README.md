@@ -116,6 +116,10 @@ Only issues with the label `generate-code` will be processed by AutoCoder.
 
 We welcome contributions to improve AutoCoder! Please open an issue or submit a pull request for any features or bug fixes you’d like to see.
 
+## Acknowledgements
+
+This repository and project are based on the `DevOps Engineer with AI` course by [Hyperskill](https://hyperskill.org) in collaboration with [JetBrains](https://www.jetbrains.com/). The course provided the foundational knowledge and practical exercises that inspired the creation and development of AutoCoder. Special thanks to the Hyperskill and JetBrains teams for designing such an engaging and comprehensive learning experience.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
