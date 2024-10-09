@@ -44,7 +44,8 @@ jobs:
           token: ${{ env.GITHUB_TOKEN }}
           commit-message: Initialize code package created by gpt
           committer: autocoder-bot <actions@github.com>
-          author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
+#          author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
+          author: autocoder-bot <actions@github.com>
           signoff: false
           branch: autocoder-branch-${{ env.ISSUE_NUMBER }}
           base: main
