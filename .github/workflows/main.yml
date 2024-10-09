@@ -1,5 +1,9 @@
 name: AutoCoder Bot
 
+permissions:
+  contents: write
+  pull-requests: write
+
 on:
   issues:
     types: [opened, reopened, labeled]
