@@ -46,12 +46,13 @@ runs:
 
     - name: Generate Code with ChatGPT
       id: generate_code
-      env:
-        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
-        REPOSITORY: ${{ inputs.repository }}
-        ISSUE_NUMBER: ${{ inputs.issue.number }}
-        OPENAI_API_KEY: ${{ inputs.OPENAI_API_KEY }}
-      run:  ${{ github.action_path }}/${{ inputs.SCRIPT_PATH }} $GITHUB_TOKEN $REPOSITORY $ISSUE_NUMBER $OPENAI_API_KEY
+#      env:
+#        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+#        REPOSITORY: ${{ inputs.repository }}
+#        ISSUE_NUMBER: ${{ inputs.issue.number }}
+#        OPENAI_API_KEY: ${{ inputs.OPENAI_API_KEY }}
+#      run:  ${{ github.action_path }}/${{ inputs.SCRIPT_PATH }} $GITHUB_TOKEN $REPOSITORY $ISSUE_NUMBER $OPENAI_API_KEY
+      run:  ${{ github.action_path }}/${{ inputs.SCRIPT_PATH }} ${{ inputs.GITHUB_TOKEN }} ${{ inputs.REPOSITORY }} ${{ inputs.ISSUE_NUMBER }} ${{ inputs.OPENAI_API_KEY }}
       shell: bash
 
     - name: Upload Artifact
