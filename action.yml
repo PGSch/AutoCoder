@@ -1,7 +1,7 @@
 
 name: 'AutoCoder'
 description: 'This action automates the process of generating code from GitHub issues using OpenAIs ChatGPT and subsequently creates a pull request with the generated code for review.'
-author: 'Your Name or Organization'
+author: 'github.com/PGSch'
 
 inputs:
   REPOSITORY:
@@ -31,12 +31,6 @@ outputs:
 
 runs:
   using: 'composite'
-  env:
-    GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
-    REPOSITORY: ${{ inputs.repository }}
-    ISSUE_NUMBER: ${{ inputs.ISSUE_NUMBER }}
-    OPENAI_API_KEY: ${{ inputs.OPENAI_API_KEY }}
-    SCRIPT_PATH: ${{ inputs.SCRIPT_PATH }}
 
   steps:
     - name: Greet Users
@@ -50,6 +44,7 @@ runs:
       run: |
         git config --local user.name "autocoder-bot"
         git config --local user.email "actions@github.com"
+        git remote set-url origin https://x-access-token:${{ inputs.GITHUB_TOKEN }}@github.com/${{ inputs.REPOSITORY }}.git
 
     - name: make the script executable
       run: chmod +x ./${{ inputs.SCRIPT_PATH }}
@@ -80,6 +75,7 @@ runs:
         git config --local user.email "actions@github.com"
         git add ./autocoder-artifact
         git commit -m "Add generated code from ChatGPT"
+        git push origin HEAD:autocoder-branch-${{ inputs.ISSUE_NUMBER }}
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v6
