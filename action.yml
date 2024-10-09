@@ -21,7 +21,8 @@ inputs:
     default: scripts/script.sh
   LABEL:
     description: 'Allows users to customize the label that triggers the action.'
-    required: true
+    required: false
+    default: autocoder-bot
 
 outputs:
   pull_request_url:
@@ -29,6 +30,8 @@ outputs:
 
 runs:
   using: 'composite'
+  if: contains(github.event.issue.labels.*.name, ${{ inputs.LABEL }})
+
   steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
