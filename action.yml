@@ -17,7 +17,8 @@ inputs:
     required: true
   SCRIPT_PATH:
     description: 'The path to the script that interacts with ChatGPT and generates code.'
-    required: true
+    required: false
+    default: scripts/script.sh
   LABEL:
     description: 'Allows users to customize the label that triggers the action.'
     required: true
@@ -38,7 +39,7 @@ runs:
       shell: bash
 
     - name: make the script executable
-      run: chmod +x ./scripts/script.sh
+      run: chmod +x ${{ github.action_path }}/${{ inputs.SCRIPT_PATH }}
       shell: bash
 
     - name: Generate Code with ChatGPT
@@ -48,7 +49,7 @@ runs:
         REPOSITORY: ${{ inputs.repository }}
         ISSUE_NUMBER: ${{ inputs.issue.number }}
         OPENAI_API_KEY: ${{ inputs.OPENAI_API_KEY }}
-      run: ./scripts/script.sh $GITHUB_TOKEN $REPOSITORY $ISSUE_NUMBER $OPENAI_API_KEY
+      run:  ${{ github.action_path }}/${{ inputs.SCRIPT_PATH }} $GITHUB_TOKEN $REPOSITORY $ISSUE_NUMBER $OPENAI_API_KEY
       shell: bash
 
     - name: Upload Artifact
