@@ -43,9 +43,16 @@ runs:
       run: echo "Hello, welcome to AutoCoder! Let's generate some code."
       shell: bash
 
+    - name: Configure Git
+      run: |
+        git config --local user.name "autocoder-bot"
+        git config --local user.email "actions@github.com"
+
+    - name: make the script executable
+      run: chmod +x ./scripts/script.sh
+
     - name: Generate Code from Issue
       id: generate_code
-
       run: ./${{ inputs.SCRIPT_PATH }} ${{ inputs.GITHUB_TOKEN }} ${{ inputs.REPOSITORY }} ${{ inputs.ISSUE_NUMBER }} ${{ inputs.OPENAI_API_KEY }}
       shell: bash
 
