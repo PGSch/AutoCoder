@@ -3,6 +3,8 @@
 
 [![GitHub Release](https://img.shields.io/github/v/release/PGSch/AutoCoder?logo=github)](https://github.com/PGSch/AutoCoder/releases)
 [![GitHub License](https://img.shields.io/github/license/PGSch/AutoCoder)](https://github.com/PGSch/AutoCoder/blob/main/LICENSE)
+[![Sponsor](https://img.shields.io/badge/sponsor-♥-f06292)](https://github.com/sponsors/PGSch)
+[![Twitter Follow](https://img.shields.io/twitter/follow/pgschdev?style=social)](https://twitter.com/intent/follow?screen_name=pgschdev)
 
 ## Overview
 
@@ -66,7 +68,6 @@ jobs:
 | `ISSUE_NUMBER` | `true`   | The number of the issue that triggered the action. This is used to identify and process the correct issue.                                                            |
 | `OPENAI_API_KEY`| `true`  | API key for OpenAI, enabling interactions with the ChatGPT service to generate code based on issue descriptions.                                                     |
 | `SCRIPT_PATH`  | `false`  | The path to the script that interacts with ChatGPT and generates code. This defaults to `scripts/script.sh` but can be customized to point to other scripts.          |
-| `LABEL`        | `false`  | The label assigned to GitHub issues that should be processed by the AutoCoder action. Only issues with this label will trigger the code generation process. Default is `autocoder-bot`. |
 
 ### Outputs
 
@@ -103,14 +104,7 @@ Make sure the custom script is located in your repository and is executable.
 
 ### Triggering the Action
 
-The action can be triggered using labels on issues. Set the `LABEL` input to control which issues should trigger the action:
-
-```yaml
-with:
-  LABEL: "generate-code"
-```
-
-Only issues with the label `generate-code` will be processed by AutoCoder.
+The action will be triggered based on your workflow settings.
 
 ## Contributing
 
