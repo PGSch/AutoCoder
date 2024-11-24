@@ -91,7 +91,7 @@ This action requires the following permissions to function properly:
 
 ## Advanced Configuration
 
-### Custom Scripts
+### Custom Scripts (WIP)
 
 You can provide your own custom scripts to control how the issue descriptions are processed by specifying the `SCRIPT_PATH` input. For example:
 
